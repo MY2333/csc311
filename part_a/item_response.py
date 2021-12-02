@@ -136,7 +136,7 @@ def main():
     # Tune learning rate and number of iterations. With the implemented #
     # code, report the validation and test accuracy.                    #
     #####################################################################
-    theta, beta, val_acc_lst, train_llh, valid_llh = irt(train_data, val_data, 0.001, 100)
+    theta, beta, val_acc_lst, train_llh, valid_llh = irt(train_data, val_data, 0.001, 50)
     plt.plot(train_llh)
     plt.title("Training")
     plt.show()
@@ -159,9 +159,9 @@ def main():
     r1 = sigmoid(theta-beta[questions[0]])
     r2 = sigmoid(theta-beta[questions[1]])
     r3 = sigmoid(theta-beta[questions[2]])
-    plt.scatter(theta, r1, label="question 1")
-    plt.scatter(theta, r2, label="question 2")
-    plt.scatter(theta, r3, label="question 3")
+    plt.scatter(theta, r1, label="question " + str(questions[0]))
+    plt.scatter(theta, r2, label="question " + str(questions[1]))
+    plt.scatter(theta, r3, label="question " + str(questions[2]))
     plt.xlabel("Value of theta")
     plt.ylabel("Probability of the correct response")
     plt.legend()
