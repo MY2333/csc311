@@ -1,7 +1,7 @@
 # TODO: complete this file.
 from numpy import nan
 from knn import *
-
+from item_response import evaluate as ir_evaluate, irt
 
 from utils import *
 train_data = load_train_csv("../data")
@@ -41,12 +41,19 @@ def knn(matrix, valid_data):
         valid_predict.append(mat[user_id][question_id])
     return valid_predict
 
-
+def ir(boot_train):
+    theta, beta, val_acc_lst, train_llh, valid_llh = irt(boot_train, val_data, 0.001, 100)
+    val_acc = ir_evaluate(val_data, theta, beta)
+    test_acc = ir_evaluate(test_data, theta, beta)
+    return val_acc, test_acc
 
 if __name__ == "__main__":
     sparse_matrix, boot_train = bootstrap()
     knn_predict = knn(sparse_matrix, val_data)
     print(evaluate(val_data,knn_predict))
+    ir_predict = ir(boot_train)
+    print("Validation for IR:"+str(ir_predict[0]))
+    print("Training for IR:"+str(ir_predict[1]))
 
 
 
