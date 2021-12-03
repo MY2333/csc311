@@ -27,7 +27,6 @@ def bootstrap():
     return sparse_matrix, boot_train
 
 
-
 # user-based collaborative filtering
 def knn(matrix, valid_data):
     valid_predict = []
@@ -41,6 +40,15 @@ def knn(matrix, valid_data):
         valid_predict.append(mat[user_id][question_id])
     return valid_predict
 
+
+def knn_predict_func(sparse_matrix):
+    predict_val = knn(sparse_matrix, val_data)
+    val_acc = evaluate(val_data, predict_val)
+    predict_test = knn(sparse_matrix, test_data)
+    test_acc = evaluate(test_data,predict_test)
+    return val_acc, test_acc
+
+
 def ir(boot_train):
     theta, beta, val_acc_lst, train_llh, valid_llh = irt(boot_train, val_data, 0.001, 100)
     val_acc = ir_evaluate(val_data, theta, beta)
@@ -48,12 +56,18 @@ def ir(boot_train):
     return val_acc, test_acc
 
 if __name__ == "__main__":
+    # get bootstrap data
     sparse_matrix, boot_train = bootstrap()
-    knn_predict = knn(sparse_matrix, val_data)
-    print(evaluate(val_data,knn_predict))
+
+    # knn model
+    knn_predict = knn_predict_func(sparse_matrix)
+    print("Validation for KNN" + str(knn_predict[0])
+    print("Testing for KNN" + str(knn_predict[1])
+
+    # ir model
     ir_predict = ir(boot_train)
     print("Validation for IR:"+str(ir_predict[0]))
-    print("Training for IR:"+str(ir_predict[1]))
+    print("Testing for IR:"+str(ir_predict[1]))
 
 
 
