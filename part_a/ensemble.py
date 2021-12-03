@@ -4,32 +4,30 @@ from knn import *
 from item_response import evaluate as ir_evaluate, irt
 
 from utils import *
-from sklearn.utils import resample
+
 
 train_data = load_train_csv("../data")
 val_data = load_valid_csv("../data")
 test_data = load_public_test_csv("../data")
-sparse_matrix = load_train_sparse("../data").toarray()
+
 
 def bootstrap():
-    boot_matrix = resample(sparse_matrix, random_state=0)
-    boot_train = resample(sparse_matrix, random_state=0)
+    boot_matrix = np.full((542, 1774), nan)
+    boot_train = {"user_id": [], "question_id": [], "is_correct": []}
+    size = len(train_data['user_id'])
+    index_lst = np.random.choice(size-1, size)
 
-    # sparse_matrix = np.full((542, 1774), nan)
-    # boot_train = {"user_id": [], "question_id": [], "is_correct": []}
-    # size = len(train_data['user_id'])
-    # index_lst = np.random.choice(size-1, size)
-    #
-    # for i in index_lst:
-    #     user_id = train_data["user_id"][i]
-    #     question_id = train_data["question_id"][i]
-    #     is_correct = train_data["is_correct"][i]
-    #     boot_train["user_id"].append(user_id)
-    #     boot_train["question_id"].append(question_id)
-    #     boot_train["is_correct"].append(is_correct)
-    #     if np.isnan(sparse_matrix[user_id - 1][question_id - 1]):
-    #         sparse_matrix[user_id - 1][question_id - 1] = is_correct
-    #
+    for i in index_lst:
+        user_id = train_data["user_id"][i]
+        question_id = train_data["question_id"][i]
+        is_correct = train_data["is_correct"][i]
+        boot_train["user_id"].append(user_id)
+        boot_train["question_id"].append(question_id)
+        boot_train["is_correct"].append(is_correct)
+        if np.isnan(boot_matrix[user_id - 1][question_id - 1]):
+            boot_matrix[user_id - 1][question_id - 1] = is_correct
+
+
     return boot_matrix, boot_train
 
 
