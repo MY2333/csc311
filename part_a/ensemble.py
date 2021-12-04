@@ -1,7 +1,7 @@
 # TODO: complete this file.
 from numpy import nan
 from knn import *
-from item_response import evaluate as ir_evaluate, irt
+from item_response import *
 
 from utils import *
 
@@ -52,12 +52,20 @@ def knn_predict_func(sparse_matrix):
     test_acc = evaluate(test_data,predict_test)
     return val_acc, test_acc
 
+def ir_predict_function(theta, beta, data):
+    pred = []
+    for i, q in enumerate(data["question_id"]):
+        u = data["user_id"][i]
+        x = (theta[u] - beta[q]).sum()
+        p_a = sigmoid(x)
+        pred.append(p_a)
+    return pred
 
 def ir(boot_train):
     theta, beta, val_acc_lst, train_llh, valid_llh = irt(boot_train, val_data, 0.001, 100)
-    val_acc = ir_evaluate(val_data, theta, beta)
-    test_acc = ir_evaluate(test_data, theta, beta)
-    return val_acc, test_acc
+    val = ir_predict_function(theta, beta, val_data)
+    test = ir_predict_function(theta, beta, test_data)
+    return val, test
 
 if __name__ == "__main__":
     # get bootstrap data
